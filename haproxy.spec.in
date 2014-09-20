@@ -3,16 +3,19 @@
 %define harel HAREL_REPLACE
 %define rpmrel RPMREL_REPLACE
 
+%if 0%{?srcrpm_no_dist}
+%undefine dist
+%endif
 
 Summary: HA-Proxy is a TCP/HTTP reverse proxy for high availability environments
 Name: haproxy
 Version: %{haver}.%{harel}
-Release: %{rpmrel}
+Release: %{rpmrel}%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://www.haproxy.org/
 Source0: http://www.haproxy.org/download/%{haver}/src/%{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: pcre-devel make gcc openssl-devel
 Requires: /sbin/chkconfig, /sbin/service
 
@@ -33,13 +36,13 @@ handle thousands of simultaneous connections on hundreds of instances without
 risking the system's stability.
 
 %prep
-%setup -n %{name}-%{version}
+%setup -q
 
 # We don't want any perl dependecies in this RPM:
 %define __perl_requires /bin/true
 
 %build
-%{__make} USE_PCRE=1 DEBUG="" ARCH=%{_target_cpu} TARGET=linux26 USE_OPENSSL=1
+%{__make}  %{?_smp_mflags} ARCH=%{_target_cpu} TARGET=linux2628 USE_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 USE_GETADDRINFO=1 USE_FUTEX=1 DEBUG="-s"
 
 %install
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
@@ -89,199 +92,5 @@ fi
 %attr(0755,haproxy,haproxy) %{_sharedstatedir}/haproxy
 
 %changelog
-* Wed Sep 10 2014 Boogie Shafer <boogieshafer@yahoo.com>
-- updated to 1.5.4
-
-* Fri Mar 05 2014 Ilya Sukhanov <ilya@sukhanov.net>
-- updated to 1.5.0-dev22
-
-* Fri Feb 21 2014 Chao Lin <clin@amplify.com>
-- Build with ssl support
-
-* Mon Oct 15 2013 Ilya Sukhanov <ilya@sukhanov.net>
-- add user creation
-- set up chroot dir
-
-* Mon Jul 01 2013 Nathan Milford <nathan@milford.io>
-- updated to 1.5.0-dev19
-
-* Mon Nov 29 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.10
-
-* Fri Oct 29 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.9
-
-* Wed Jun 16 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.8
-
-* Mon Jun  7 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.7
-
-* Sun May 16 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.6
-
-* Thu May 13 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.5
-
-* Wed Apr  7 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.4
-
-* Tue Mar 30 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.3
-
-* Wed Mar 17 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.2
-
-* Thu Mar  4 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.1
-
-* Fri Feb 26 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4.0
-
-* Tue Feb  2 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-rc1
-
-* Mon Jan 25 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev8
-
-* Mon Jan 25 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev7
-
-* Fri Jan  8 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev6
-
-* Sun Jan  3 2010 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev5
-
-* Mon Oct 12 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev4
-
-* Thu Sep 24 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev3
-
-* Sun Aug  9 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev2
-
-* Wed Jul 29 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev1
-
-* Tue Jun 09 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.4-dev0
-
-* Sun May 10 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.18
-
-* Sun Mar 29 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.17
-
-* Sun Mar 22 2009 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.16
-
-* Sat Apr 19 2008 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.15
-
-* Wed Dec  5 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.14
-
-* Thu Oct 18 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.13
-
-* Sun Jun 17 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.12
-
-* Sun Jun  3 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.11.4
-
-* Mon May 14 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.11.3
-
-* Mon May 14 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.11.2
-
-* Mon May 14 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.11.1
-
-* Mon May 14 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.11
-
-* Thu May 10 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.10.2
-
-* Tue May 09 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.10.1
-
-* Tue May 08 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.10
-
-* Sun Apr 15 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.9
-
-* Tue Apr 03 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.8.2
-
-* Sun Apr 01 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.8.1
-
-* Sun Mar 25 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.8
-
-* Wed Jan 26 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.7
-
-* Wed Jan 22 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.6
-
-* Wed Jan 07 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.5
-
-* Wed Jan 02 2007 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.4
-
-* Wed Oct 15 2006 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.3
-
-* Wed Sep 03 2006 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.2
-
-* Wed Jul 09 2006 Willy Tarreau <w@1wt.eu>
-- updated to 1.3.1
-
-* Wed May 21 2006 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.14
-
-* Wed May 01 2006 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.13
-
-* Wed Apr 15 2006 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.12
-
-* Wed Mar 30 2006 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.11.1
-
-* Wed Mar 19 2006 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.10
-
-* Wed Mar 15 2006 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.9
-
-* Sat Jan 22 2005 Willy Tarreau <willy@w.ods.org>
-- updated to 1.2.3 (1.1.30)
-
-* Sun Nov 14 2004 Willy Tarreau <w@w.ods.org>
-- updated to 1.1.29
-- fixed path to config and init files
-- statically linked PCRE to increase portability to non-pcre systems
-
-* Sun Jun  6 2004 Willy Tarreau <willy@w.ods.org>
-- updated to 1.1.28
-- added config check support to the init script
-
-* Tue Oct 28 2003 Simon Matter <simon.matter@invoca.ch>
-- updated to 1.1.27
-- added pid support to the init script
-
-* Wed Oct 22 2003 Simon Matter <simon.matter@invoca.ch>
-- updated to 1.1.26
-
-* Thu Oct 16 2003 Simon Matter <simon.matter@invoca.ch>
-- initial build
+* Fri Sep 19 2014 Boogie Shafer <boogieshafer@yahoo.com> 1.5.4-1
+- trimmed changelog to clear mock errors
