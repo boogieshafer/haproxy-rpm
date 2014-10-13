@@ -3,16 +3,21 @@ haproxy-rpm
 
 A build process to create an haproxy RPM using mock.
 
+RPM is for use on linux kernel 2.6.28+
+
 To setup your build environment (if necessary):
+
 	sudo yum upgrade -y
 	sudo yum groupinstall -y development
 	sudo yum install -y fedora-packager
 	rpmdev-setuptree
 
 Add additional prerequisites for haproxy compile:
+
 	sudo yum install -y pcre-devel openssl-devel
 
 To build:
+
 	git clone git@github.com:boogieshafer/haproxy-rpm.git
 	cd haproxy-rpm
 	./build-haproxy.1.5.x.sh
