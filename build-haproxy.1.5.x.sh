@@ -1,6 +1,6 @@
 #!/bin/sh
 haproxyver="1.5"
-haproxyrel="4"
+haproxyrel="5"
 rpmrel="1"
 
 rm -rf ~/rpmbuild/{BUILD,BUILDROOT,SRPMS}/haproxy* || true

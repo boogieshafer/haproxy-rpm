@@ -92,5 +92,10 @@ fi
 %attr(0755,haproxy,haproxy) %{_sharedstatedir}/haproxy
 
 %changelog
-* Fri Sep 19 2014 Boogie Shafer <boogieshafer@yahoo.com> 1.5.4-1
+* Mon Oct 13 2014 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.5-1
+- http://www.haproxy.org/download/1.5/src/CHANGELOG
+
+* Fri Sep 19 2014 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.4-1
 - trimmed changelog to clear mock errors
