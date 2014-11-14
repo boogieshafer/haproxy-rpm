@@ -12,6 +12,8 @@ To setup your build environment (if necessary):
 	sudo yum install -y fedora-packager
 	rpmdev-setuptree
 
+Add build user to mock group
+
 Add additional prerequisites for haproxy compile:
 
 	sudo yum install -y pcre-devel openssl-devel
@@ -24,7 +26,7 @@ To build:
 
 
 TODO:
-	init script for EL7
+	logic to use systemd scripts vs init on appropriate platforms
 
 Notes:
 

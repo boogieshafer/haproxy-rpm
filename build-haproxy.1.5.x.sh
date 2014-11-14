@@ -1,9 +1,10 @@
 #!/bin/sh
 haproxyver="1.5"
-haproxyrel="5"
+haproxyrel="8"
 rpmrel="1"
 
 rm -rf ~/rpmbuild/{BUILD,BUILDROOT,SRPMS}/haproxy* || true
+rm  ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy || true
 mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,SOURCES,RPMS,SRPMS,tmp}
 cp haproxy.spec.in haproxy.spec
 
@@ -16,6 +17,8 @@ if [ ! -f ~/rpmbuild/SOURCES/haproxy-$haproxyver.$haproxyrel.tar.gz ];
 then
     wget "http://www.haproxy.org/download/$haproxyver/src/haproxy-$haproxyver.$haproxyrel.tar.gz" -O ~/rpmbuild/SOURCES/haproxy-$haproxyver.$haproxyrel.tar.gz
 fi
+
+cp etc.logrotate.d.haproxy ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy
 
 echo "Building initial source rpm..."
 rpmbuild -bs --define "srcrpm_no_dist 1" haproxy.spec
