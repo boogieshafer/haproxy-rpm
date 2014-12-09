@@ -90,12 +90,16 @@ fi
 %attr(0755,root,root) %{_sbindir}/%{name}
 %dir %{_sysconfdir}/%{name}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/%{name}.cfg
-%attr(0644,root,root) %config %{_sysconfdir}/logrotate.d/%{name}
-%attr(0755,root,root) %config %{_sysconfdir}/rc.d/init.d/%{name}
+%attr(0644,root,root) %{_sysconfdir}/logrotate.d/%{name}
+%attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/%{name}
 
 %attr(0755,haproxy,haproxy) %{_sharedstatedir}/haproxy
 
 %changelog
+* Tue Dec 09 2014 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.9-1
+- removed config flag on logrotate and init scripts
+
 * Fri Nov 14 2014 Boogie Shafer <boogieshafer@yahoo.com>
 - 1.5.8-1
 
