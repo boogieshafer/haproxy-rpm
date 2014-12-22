@@ -24,9 +24,15 @@ To build:
 	cd haproxy-rpm
 	./build-haproxy.1.5.x.sh
 
+NOTE: 
+	to enable USE_PCRE_JIT=1 option in haproxy requires PCRE > 8.20
+        it is statically linked in this build to a current release
+        this will workaround old distro version
+        http://www.pcre.org
 
 TODO:
 	logic to use systemd scripts vs init on appropriate platforms
+	include example ocsp_update script and cron job
 
 Notes:
 

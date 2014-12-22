@@ -2,6 +2,7 @@
 %define haver HAVER_REPLACE
 %define harel HAREL_REPLACE
 %define rpmrel RPMREL_REPLACE
+%define pcrever PCREVER_REPLACE
 
 %if 0%{?srcrpm_no_dist}
 %undefine dist
@@ -14,8 +15,9 @@ Release: %{rpmrel}%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://www.haproxy.org/
-Source0: http://www.haproxy.org/download/%{haver}/src/%{name}-%{version}.tar.gz
-Source1: etc.logrotate.d.haproxy
+Source1: http://sourceforge.net/projects/pcre/files/pcre/%{pcrever}/pcre-%{pcrever}.tar.gz
+Source2: http://www.haproxy.org/download/%{haver}/src/%{name}-%{version}.tar.gz
+Source3: etc.logrotate.d.haproxy
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: pcre-devel make gcc openssl-devel
 Requires: /sbin/chkconfig, /sbin/service
@@ -37,13 +39,20 @@ handle thousands of simultaneous connections on hundreds of instances without
 risking the system's stability.
 
 %prep
-%setup -q
+
+# build PCRE
+%setup -q -D -T -b 1 -n pcre-%{pcrever}
+#cd pcre-%{pcrever}
+./configure --enable-jit --enable-utf
+make
+
+%setup -q -D -T -b 2 -n haproxy-%{version}
 
 # We don't want any perl dependecies in this RPM:
 %define __perl_requires /bin/true
 
 %build
-%{__make}  %{?_smp_mflags} ARCH=%{_target_cpu} TARGET=linux2628 USE_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 USE_GETADDRINFO=1 USE_FUTEX=1 DEBUG="-s"
+%{__make}  %{?_smp_mflags} ARCH=%{_target_cpu} TARGET=linux2628 USE_STATIC_PCRE=1 USE_PCRE_JIT=1 PCRE_INC=../pcre-%{pcrever}/ PCRE_LIB=../pcre-%{pcrever}/.libs USE_OPENSSL=1 USE_ZLIB=1 USE_GETADDRINFO=1 USE_FUTEX=1 DEBUG="-s"
 
 %install
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
@@ -59,7 +68,7 @@ risking the system's stability.
 %{__install} -c -m 644 examples/%{name}.cfg %{buildroot}%{_sysconfdir}/%{name}/
 %{__install} -c -m 755 examples/%{name}.init %{buildroot}%{_sysconfdir}/rc.d/init.d/%{name}
 %{__install} -c -m 755 doc/%{name}.1 %{buildroot}%{_mandir}/man1/
-%{__install} -c -m 644 %SOURCE1 %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+%{__install} -c -m 644 %SOURCE3 %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 %clean
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
@@ -96,6 +105,10 @@ fi
 %attr(0755,haproxy,haproxy) %{_sharedstatedir}/haproxy
 
 %changelog
+* Mon Dec 22 2014 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.9-2
+- added static PCRE build to enable USE_PCRE_JIT
+
 * Tue Dec 09 2014 Boogie Shafer <boogieshafer@yahoo.com>
 - 1.5.9-1
 - removed config flag on logrotate and init scripts

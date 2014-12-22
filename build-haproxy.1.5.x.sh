@@ -1,7 +1,8 @@
 #!/bin/sh
 haproxyver="1.5"
 haproxyrel="9"
-rpmrel="1"
+rpmrel="2"
+pcrever="8.36"
 
 rm -rf ~/rpmbuild/{BUILD,BUILDROOT,SRPMS}/haproxy* || true
 rm  ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy || true
@@ -11,11 +12,17 @@ cp haproxy.spec.in haproxy.spec
 sed -i "s|HAVER_REPLACE|$haproxyver|g" haproxy.spec
 sed -i "s|HAREL_REPLACE|$haproxyrel|g" haproxy.spec
 sed -i "s|RPMREL_REPLACE|$rpmrel|g" haproxy.spec
+sed -i "s|PCREVER_REPLACE|$pcrever|g" haproxy.spec
 
 echo "Downloading sources..."
 if [ ! -f ~/rpmbuild/SOURCES/haproxy-$haproxyver.$haproxyrel.tar.gz ];
 then
     wget "http://www.haproxy.org/download/$haproxyver/src/haproxy-$haproxyver.$haproxyrel.tar.gz" -O ~/rpmbuild/SOURCES/haproxy-$haproxyver.$haproxyrel.tar.gz
+fi
+
+if [ ! -f ~/rpmbuild/SOURCES/pcre-$pcrever.tar.gz ];
+then
+    wget "http://sourceforge.net/projects/pcre/files/pcre/$pcrever/pcre-$pcrever.tar.gz" -O ~/rpmbuild/SOURCES/pcre-$pcrever.tar.gz
 fi
 
 cp etc.logrotate.d.haproxy ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy
