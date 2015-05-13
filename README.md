@@ -1,9 +1,19 @@
 haproxy-rpm
 ===========
 
-A build process to create an haproxy RPM using mock.
+A build process to create a more enhanced haproxy RPM using mock
+
+-HTTPS enabled using self-signed certificate
+-HTTP compression enabled
+-up to date PCRE included
+-additional scripts for OCSP support and cert management
+-default config incorporating suggested cipher suite
+
+updated for haproxy version 1.5.12 and PCRE version 8.37
 
 RPM is for use on linux kernel 2.6.28+
+
+
 
 To setup your build environment (if necessary):
 
@@ -24,19 +34,38 @@ To build:
 	cd haproxy-rpm
 	./build-haproxy.1.5.x.sh
 
-NOTE: 
-	to enable USE_PCRE_JIT=1 option in haproxy requires PCRE > 8.20
-        it is statically linked in this build to a current release
-        this will workaround old distro version
-        http://www.pcre.org
+Notes:
+	PCRE is statically linked into this haproxy build
+	this will workaround older distro versions of PCRE
+	http://www.pcre.org
+
+	config is in /etc/haproxy/haproxy.cfg
+
+	this rpm will generate a selfsigned certificate for HTTPS on install
+
+
+Manage:
+	https://haproxy_host.domain.com/haproxy_stats
+
+           administrative permissions
+                 username: admin, password: AdMiN123
+           read only permissions
+                 username: haproxy, password: haproxy
+
+	regular haproxy usage recommendations
+         - to "preflight-check" a new config
+	   sudo /etc/init.d/haproxy check
+
+         - to apply new config with minimal interruption to clients
+	   sudo /etc/init.d/haproxy reload
+
+         - to perform a full reset on haproxy
+	   sudo /etc/init.d/haproxy restart
 
 TODO:
-	logic to use systemd scripts vs init on appropriate platforms
-	include example ocsp_update script and cron job
+	native systemd init script for newer platforms
 
-Notes:
 
 reference: http://www.haproxy.org
 
-initial rpm spec file came from here
-https://github.com/nmilford/rpm-haproxy
+initial rpm spec file came from https://github.com/nmilford/rpm-haproxy

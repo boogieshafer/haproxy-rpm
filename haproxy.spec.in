@@ -16,11 +16,19 @@ License: GPL
 Group: System Environment/Daemons
 URL: http://www.haproxy.org/
 Source1: http://sourceforge.net/projects/pcre/files/pcre/%{pcrever}/pcre-%{pcrever}.tar.gz
-Source2: http://www.haproxy.org/download/%{haver}/src/%{name}-%{version}.tar.gz
-Source3: etc.logrotate.d.haproxy
+Source2: http://www.haproxy.org/download/%{haver}/src/haproxy-%{version}.tar.gz
+Source3: haproxy.cfg
+Source4: etc.logrotate.d.haproxy
+Source5: etc.cron.d.haproxy-ocsp
+Source6: ocsp-update.sh
+Source7: build_haproxy_combined_pem.sh
+Source8: make_selfsigned_cert.sh
+Source9: etc.rsyslog.d.haproxy.conf
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: pcre-devel make gcc openssl-devel
 Requires: /sbin/chkconfig, /sbin/service
+Requires: socat
 
 %description
 HA-Proxy is a TCP/HTTP reverse proxy which is particularly suited for high
@@ -42,7 +50,6 @@ risking the system's stability.
 
 # build PCRE
 %setup -q -D -T -b 1 -n pcre-%{pcrever}
-#cd pcre-%{pcrever}
 ./configure --enable-jit --enable-utf
 make
 
@@ -59,16 +66,25 @@ make
 
 %{__install} -d %{buildroot}%{_sbindir}
 %{__install} -d %{buildroot}%{_sysconfdir}/logrotate.d
+%{__install} -d %{buildroot}%{_sysconfdir}/cron.d
+%{__install} -d %{buildroot}%{_sysconfdir}/rsyslog.d
 %{__install} -d %{buildroot}%{_sysconfdir}/rc.d/init.d
-%{__install} -d %{buildroot}%{_sysconfdir}/%{name}
+%{__install} -d %{buildroot}%{_sysconfdir}/haproxy
+%{__install} -d %{buildroot}%{_sysconfdir}/haproxy/certs
 %{__install} -d %{buildroot}%{_mandir}/man1/
 %{__install} -d %{buildroot}%{_sharedstatedir}/haproxy
 
-%{__install} -s %{name} %{buildroot}%{_sbindir}/
-%{__install} -c -m 644 examples/%{name}.cfg %{buildroot}%{_sysconfdir}/%{name}/
-%{__install} -c -m 755 examples/%{name}.init %{buildroot}%{_sysconfdir}/rc.d/init.d/%{name}
-%{__install} -c -m 755 doc/%{name}.1 %{buildroot}%{_mandir}/man1/
-%{__install} -c -m 644 %SOURCE3 %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+%{__install} -s haproxy %{buildroot}%{_sbindir}/
+#%{__install} -c -m 644 examples/haproxy.cfg %{buildroot}%{_sysconfdir}/haproxy/
+%{__install} -c -m 644 %SOURCE3 %{buildroot}%{_sysconfdir}/haproxy/haproxy.cfg
+%{__install} -c -m 755 examples/haproxy.init %{buildroot}%{_sysconfdir}/rc.d/init.d/haproxy
+%{__install} -c -m 755 doc/haproxy.1 %{buildroot}%{_mandir}/man1/
+%{__install} -c -m 644 %SOURCE4 %{buildroot}%{_sysconfdir}/logrotate.d/haproxy
+%{__install} -c -m 644 %SOURCE5 %{buildroot}%{_sysconfdir}/cron.d/haproxy-ocsp
+%{__install} -c -m 644 %SOURCE6 %{buildroot}%{_sysconfdir}/haproxy/certs/ocsp-update.sh
+%{__install} -c -m 644 %SOURCE7 %{buildroot}%{_sysconfdir}/haproxy/certs/build_haproxy_combined_pem.sh
+%{__install} -c -m 644 %SOURCE8 %{buildroot}%{_sysconfdir}/haproxy/certs/make_selfsigned_cert.sh
+%{__install} -c -m 644 %SOURCE9 %{buildroot}%{_sysconfdir}/rsyslog.d/haproxy.conf
 
 %clean
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
@@ -78,33 +94,53 @@ make
 /usr/sbin/useradd -u 188 -g haproxy -d /var/lib/haproxy -s /sbin/nologin -r haproxy 2>/dev/null || :
 
 %post
-/sbin/chkconfig --add %{name}
+/sbin/chkconfig --add haproxy
+cd /etc/haproxy/certs && /etc/haproxy/certs/make_selfsigned_cert.sh && /etc/haproxy/certs/build_haproxy_combined_pem.sh
 
 %preun
 if [ $1 = 0 ]; then
-  /sbin/service %{name} stop >/dev/null 2>&1 || :
-  /sbin/chkconfig --del %{name}
+  /sbin/service haproxy stop >/dev/null 2>&1 || :
+  /sbin/chkconfig --del haproxy
 fi
 
 %postun
 if [ "$1" -ge "1" ]; then
-  /sbin/service %{name} condrestart >/dev/null 2>&1 || :
+  /sbin/service haproxy condrestart >/dev/null 2>&1 || :
 fi
 
 %files
 %defattr(-,root,root)
 %doc CHANGELOG examples/*.cfg doc/haproxy-en.txt doc/haproxy-fr.txt doc/architecture.txt doc/configuration.txt
-%doc %{_mandir}/man1/%{name}.1*
+%doc %{_mandir}/man1/haproxy.1*
 
-%attr(0755,root,root) %{_sbindir}/%{name}
-%dir %{_sysconfdir}/%{name}
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/%{name}.cfg
-%attr(0644,root,root) %{_sysconfdir}/logrotate.d/%{name}
-%attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/%{name}
+%attr(0755,root,root) %{_sbindir}/haproxy
+%dir %{_sysconfdir}/haproxy
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/haproxy/haproxy.cfg
+%attr(0755,root,root) %config(noreplace) %{_sysconfdir}/haproxy/certs/ocsp-update.sh
+%attr(0755,root,root) %config(noreplace) %{_sysconfdir}/haproxy/certs/build_haproxy_combined_pem.sh
+%attr(0755,root,root) %{_sysconfdir}/haproxy/certs/make_selfsigned_cert.sh
+%attr(0644,root,root) %{_sysconfdir}/logrotate.d/haproxy
+%attr(0644,root,root) %{_sysconfdir}/rsyslog.d/haproxy.conf
+%attr(0644,root,root) %{_sysconfdir}/cron.d/haproxy-ocsp
+%attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/haproxy
 
 %attr(0755,haproxy,haproxy) %{_sharedstatedir}/haproxy
 
 %changelog
+* Tue May 12 2015 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.12-1
+- update haproxy to 1.5.12 release
+- update bundled PCRE to 8.37
+
+* Tue Mar 24 2015 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.11-1
+- add haproxy.cfg using SSL, ciphers, compression, stats
+- add rsyslog config file
+
+* Wed Jan 07 2015 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.10-1
+- add ocsp and cert management example scripts
+
 * Mon Dec 22 2014 Boogie Shafer <boogieshafer@yahoo.com>
 - 1.5.9-2
 - added static PCRE build to enable USE_PCRE_JIT

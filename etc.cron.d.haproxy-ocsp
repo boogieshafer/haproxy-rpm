@@ -1,0 +1,2 @@
+# update oscp daily
+#2 23 * * * root /etc/haproxy/certs/ocsp-update.sh >/dev/null

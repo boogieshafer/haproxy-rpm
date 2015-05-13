@@ -1,8 +1,8 @@
 #!/bin/sh
 haproxyver="1.5"
-haproxyrel="9"
-rpmrel="2"
-pcrever="8.36"
+haproxyrel="12"
+rpmrel="1"
+pcrever="8.37"
 
 rm -rf ~/rpmbuild/{BUILD,BUILDROOT,SRPMS}/haproxy* || true
 rm  ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy || true
@@ -25,7 +25,13 @@ then
     wget "http://sourceforge.net/projects/pcre/files/pcre/$pcrever/pcre-$pcrever.tar.gz" -O ~/rpmbuild/SOURCES/pcre-$pcrever.tar.gz
 fi
 
+cp haproxy.cfg ~/rpmbuild/SOURCES/haproxy.cfg
 cp etc.logrotate.d.haproxy ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy
+cp etc.cron.d.haproxy-ocsp ~/rpmbuild/SOURCES/etc.cron.d.haproxy-ocsp
+cp certs/ocsp-update.sh ~/rpmbuild/SOURCES/ocsp-update.sh
+cp certs/build_haproxy_combined_pem.sh ~/rpmbuild/SOURCES/build_haproxy_combined_pem.sh
+cp certs/make_selfsigned_cert.sh ~/rpmbuild/SOURCES/make_selfsigned_cert.sh
+cp etc.rsyslog.d.haproxy.conf ~/rpmbuild/SOURCES/etc.rsyslog.d.haproxy.conf
 
 echo "Building initial source rpm..."
 rpmbuild -bs --define "srcrpm_no_dist 1" haproxy.spec
