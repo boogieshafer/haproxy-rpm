@@ -1,6 +1,6 @@
 #!/bin/sh
 haproxyver="1.5"
-haproxyrel="12"
+haproxyrel="14"
 rpmrel="1"
 pcrever="8.37"
 
@@ -37,9 +37,9 @@ echo "Building initial source rpm..."
 rpmbuild -bs --define "srcrpm_no_dist 1" haproxy.spec
 
 echo "Using mock to build rpm..."
-#mock -r epel-6-x86_64 ~/rpmbuild/SRPMS/haproxy-$haproxyver.$haproxyrel-$rpmrel.src.rpm
-#mock -r epel-7-x86_64 ~/rpmbuild/SRPMS/haproxy-$haproxyver.$haproxyrel-$rpmrel.src.rpm
-mock  ~/rpmbuild/SRPMS/haproxy-$haproxyver.$haproxyrel-$rpmrel.src.rpm
+mock -r epel-6-x86_64 ~/rpmbuild/SRPMS/haproxy-$haproxyver.$haproxyrel-$rpmrel.src.rpm
+mock -r epel-7-x86_64 ~/rpmbuild/SRPMS/haproxy-$haproxyver.$haproxyrel-$rpmrel.src.rpm
+#mock  ~/rpmbuild/SRPMS/haproxy-$haproxyver.$haproxyrel-$rpmrel.src.rpm
 
 echo "Cleaning up..."
 rm haproxy.spec

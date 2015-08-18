@@ -127,6 +127,10 @@ fi
 %attr(0755,haproxy,haproxy) %{_sharedstatedir}/haproxy
 
 %changelog
+* Tue Aug 18 2015 Boogie Shafer <boogieshafer@yahoo.com>
+- 1.5.14-1
+- update haproxy to 1.5.14 release
+
 * Tue May 12 2015 Boogie Shafer <boogieshafer@yahoo.com>
 - 1.5.12-1
 - update haproxy to 1.5.12 release

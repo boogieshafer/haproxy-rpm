@@ -9,7 +9,7 @@ A build process to create a more enhanced haproxy RPM using mock
 -additional scripts for OCSP support and cert management
 -default config incorporating suggested cipher suite
 
-updated for haproxy version 1.5.12 and PCRE version 8.37
+updated for haproxy version 1.5.14 and PCRE version 8.37
 
 RPM is for use on linux kernel 2.6.28+
 
