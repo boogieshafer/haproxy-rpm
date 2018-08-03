@@ -1,8 +1,8 @@
 #!/bin/sh
 haproxyver="1.5"
-haproxyrel="14"
+haproxyrel="19"
 rpmrel="1"
-pcrever="8.37"
+pcrever="8.42"
 
 rm -rf ~/rpmbuild/{BUILD,BUILDROOT,SRPMS}/haproxy* || true
 rm  ~/rpmbuild/SOURCES/etc.logrotate.d.haproxy || true

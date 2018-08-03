@@ -3,13 +3,13 @@ haproxy-rpm
 
 A build process to create a more enhanced haproxy RPM using mock
 
--HTTPS enabled using self-signed certificate
--HTTP compression enabled
--up to date PCRE included
--additional scripts for OCSP support and cert management
--default config incorporating suggested cipher suite
+ HTTPS enabled using self-signed certificate
+ HTTP compression enabled
+ up to date PCRE included
+ additional scripts for OCSP support and cert management
+ default config incorporating suggested cipher suite
 
-updated for haproxy version 1.5.14 and PCRE version 8.37
+updated for haproxy version 1.5.19 and PCRE version 8.42
 
 RPM is for use on linux kernel 2.6.28+
 
@@ -17,20 +17,23 @@ RPM is for use on linux kernel 2.6.28+
 
 To setup your build environment (if necessary):
 
+Make sure EPEL repo is enabled
+
+Install build tools
 	sudo yum upgrade -y
 	sudo yum groupinstall -y development
 	sudo yum install -y fedora-packager
 	rpmdev-setuptree
 
 Add build user to mock group
+	sudo usermod -a -G mock $LOGNAME
 
 Add additional prerequisites for haproxy compile:
-
 	sudo yum install -y pcre-devel openssl-devel
 
 To build:
 
-	git clone git@github.com:boogieshafer/haproxy-rpm.git
+	git clone https://github.com/boogieshafer/haproxy-rpm.git
 	cd haproxy-rpm
 	./build-haproxy.1.5.x.sh
 
@@ -53,13 +56,13 @@ Manage:
                  username: haproxy, password: haproxy
 
 	regular haproxy usage recommendations
-         - to "preflight-check" a new config
+           to "preflight-check" a new config
 	   sudo /etc/init.d/haproxy check
 
-         - to apply new config with minimal interruption to clients
+           to apply new config with minimal interruption to clients
 	   sudo /etc/init.d/haproxy reload
 
-         - to perform a full reset on haproxy
+           to perform a full reset on haproxy
 	   sudo /etc/init.d/haproxy restart
 
 TODO:
