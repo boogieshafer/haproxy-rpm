@@ -20,44 +20,55 @@ To setup your build environment (if necessary):
 Make sure EPEL repo is enabled
 
 Install build tools
-	sudo yum upgrade -y
-	sudo yum groupinstall -y development
-	sudo yum install -y fedora-packager
-	rpmdev-setuptree
+```
+sudo yum upgrade -y
+sudo yum groupinstall -y development
+sudo yum install -y fedora-packager
+rpmdev-setuptree
+```
 
 Add build user to mock group
-	sudo usermod -a -G mock $LOGNAME
+```
+sudo usermod -a -G mock $LOGNAME
+```
 
 Add additional prerequisites for haproxy compile:
-	sudo yum install -y pcre-devel openssl-devel
+```
+sudo yum install -y pcre-devel openssl-devel
+```
 
 To build:
-
-	git clone https://github.com/boogieshafer/haproxy-rpm.git
-	cd haproxy-rpm
-	./build-haproxy.1.5.x.sh
+```
+git clone https://github.com/boogieshafer/haproxy-rpm.git
+cd haproxy-rpm
+./build-haproxy.1.5.x.sh
+```
 
 Notes:
-	PCRE is statically linked into this haproxy build
-	this will workaround older distro versions of PCRE
-	http://www.pcre.org
+PCRE is statically linked into this haproxy build
+  this will workaround older distro versions of PCRE
+  http://www.pcre.org
 
-	config is in /etc/haproxy/haproxy.cfg
+config is in `/etc/haproxy/haproxy.cfg`
 
-	this rpm will generate a selfsigned certificate for HTTPS on install
+this rpm will generate a selfsigned certificate for HTTPS on install
 
 
 Manage:
-	https://haproxy_host.domain.com/haproxy_stats
+https://haproxy_host.domain.com/haproxy_stats
 
-           administrative permissions
-                 username: admin, password: AdMiN123
-           read only permissions
-                 username: haproxy, password: haproxy
+administrative permissions
+username: `admin`
+password: `AdMiN123`
+           
+read only permissions
+username: `haproxy`
+password: `haproxy`
 
-	regular haproxy usage recommendations
-           to "preflight-check" a new config
-	   sudo /etc/init.d/haproxy check
+regular haproxy usage recommendations:
+
+to "preflight-check" a new config
+```sudo /etc/init.d/haproxy check```
 
            to apply new config with minimal interruption to clients
 	   sudo /etc/init.d/haproxy reload
